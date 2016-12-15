@@ -1,0 +1,12 @@
+- options
+	- save with cookies
+	- expand in page vs slideshow
+	- day/night theme?
+	- sort
+- thumbnail grid
+	- slideshow on hover
+- go backend
+	- all in folder
+	- individual
+	- thumbnails
+- Gifs & Webms

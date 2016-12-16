@@ -15,6 +15,7 @@ import (
 )
 
 var vidDir = "G:/Videos"
+var staticDir = "C:/Users/mdumf_000/Brogramming/src/github.com/Squaar/Webm-Gallery/static"
 var port = 8080
 
 //TODO: command line args
@@ -26,15 +27,26 @@ func main() {
  //    router.HandleFunc("/file", file)
  //    http.Handle("/", router)
 
+	http.HandleFunc("/", static)
     http.HandleFunc("/files", files)
     http.HandleFunc("/file", file)	
     http.HandleFunc("/file/", file)
-
 
     log.Println("Listening on port " + strconv.Itoa(port))
     log.Fatal(http.ListenAndServe(":" + strconv.Itoa(port), nil))
 }
 
+func static(rw http.ResponseWriter, r *http.Request){
+	log.Println("New Request: " + r.URL.String())
+	filePath := filepath.Join(staticDir, r.URL.String())
+
+	err := sendFile (rw, filePath)
+	if err != nil{
+		log.Println(err)
+	}
+}
+
+//return newest first?
 func files(rw http.ResponseWriter, r *http.Request){
 	log.Println("New Request: " + r.URL.String())
 	files, err := ioutil.ReadDir(vidDir)

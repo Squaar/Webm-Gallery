@@ -15,6 +15,7 @@ import (
 )
 
 var vidDir = "G:/Videos"
+var thumbCache = "" //TODO: this
 var staticDir = "C:/Users/mdumf_000/Brogramming/src/github.com/Squaar/Webm-Gallery/static"
 var port = 8080
 
@@ -41,7 +42,9 @@ func static(rw http.ResponseWriter, r *http.Request){
 	log.Println("New Request: " + r.URL.String())
 
 	if r.URL.String() == "/" || r.URL.String() == "/gallery"{
+		log.Println("Redirecting to /gallery.html")
 		http.Redirect(rw, r, "/gallery.html", 303)
+		return
 	}
 
 	filePath := filepath.Join(staticDir, r.URL.String())
@@ -53,6 +56,7 @@ func static(rw http.ResponseWriter, r *http.Request){
 }
 
 //return newest first?
+//TODO: don't fatal log
 func files(rw http.ResponseWriter, r *http.Request){
 	log.Println("New Request: " + r.URL.String())
 	files, err := ioutil.ReadDir(vidDir)
@@ -89,6 +93,7 @@ func file(rw http.ResponseWriter, r *http.Request){
 }
 
 //TODO: read in chunks for safety?
+//TODO: look up how to panic and maybe do it here
 func sendFile(rw http.ResponseWriter, filePath string) error{
 	file, err := os.Open(filePath)
 	if err != nil {

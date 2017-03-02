@@ -20,6 +20,7 @@ var port = 8080
 
 //TODO: command line args
 //TODO: fix router
+//TODO: log ip
 func main() {
 	// router := mux.NewRouter()
  //    router.HandleFunc("/files", files)
@@ -38,9 +39,14 @@ func main() {
 
 func static(rw http.ResponseWriter, r *http.Request){
 	log.Println("New Request: " + r.URL.String())
+
+	if r.URL.String() == "/" || r.URL.String() == "/gallery"{
+		http.Redirect(rw, r, "/gallery.html", 303)
+	}
+
 	filePath := filepath.Join(staticDir, r.URL.String())
 
-	err := sendFile (rw, filePath)
+	err := sendFile(rw, filePath)
 	if err != nil{
 		log.Println(err)
 	}
@@ -76,7 +82,7 @@ func file(rw http.ResponseWriter, r *http.Request){
 	}
 	fullPath := filepath.Join(vidDir, fileName)
 
-	err := sendFile (rw, fullPath)
+	err := sendFile(rw, fullPath)
 	if err != nil{
 		log.Println(err)
 	}
@@ -85,10 +91,10 @@ func file(rw http.ResponseWriter, r *http.Request){
 //TODO: read in chunks for safety?
 func sendFile(rw http.ResponseWriter, filePath string) error{
 	file, err := os.Open(filePath)
-	defer file.Close()
 	if err != nil {
 		return err
 	}
+	defer file.Close()
 
 	stats, err := file.Stat()
 	if err != nil {

@@ -10,3 +10,4 @@
 	- individual
 	- thumbnails
 - Gifs & Webms
+- Collapsable subsections for subdirectories

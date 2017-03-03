@@ -10,7 +10,6 @@ import (
 	"path/filepath"
 	"io"
 	"strings"
-	// "github.com/gorilla/mux"
 	"strconv"
 )
 
@@ -19,28 +18,25 @@ var thumbCache = "" //TODO: this
 var staticDir = "C:/Users/mdumf_000/Brogramming/src/github.com/Squaar/Webm-Gallery/static"
 var port = 8080
 
-//TODO: command line args
-//TODO: fix router
-//TODO: log ip
-func main() {
-	// router := mux.NewRouter()
- //    router.HandleFunc("/files", files)
- //    router.HandleFunc("/file/{file}", file)
- //    router.HandleFunc("/file", file)
- //    http.Handle("/", router)
+type logHandler func(http.ResponseWriter, *http.Request)
 
-	http.HandleFunc("/", static)
-    http.HandleFunc("/files", files)
-    http.HandleFunc("/file", file)	
-    http.HandleFunc("/file/", file)
+//TODO: command line args
+func main() {
+	http.Handle("/", logHandler(static))
+    http.Handle("/files", logHandler(files))
+    http.Handle("/file", logHandler(file))
+    http.Handle("/file/", logHandler(file))
 
     log.Println("Listening on port " + strconv.Itoa(port))
     log.Fatal(http.ListenAndServe(":" + strconv.Itoa(port), nil))
 }
 
-func static(rw http.ResponseWriter, r *http.Request){
-	log.Println("New Request: " + r.URL.String())
+func (fn logHandler) ServeHTTP(rw http.ResponseWriter, r *http.Request){
+	log.Println(r.RemoteAddr + " - " + r.URL.String())
+	fn(rw, r)
+}
 
+func static(rw http.ResponseWriter, r *http.Request){
 	if r.URL.String() == "/" || r.URL.String() == "/gallery"{
 		log.Println("Redirecting to /gallery.html")
 		http.Redirect(rw, r, "/gallery.html", 303)
@@ -58,7 +54,6 @@ func static(rw http.ResponseWriter, r *http.Request){
 //return newest first?
 //TODO: don't fatal log
 func files(rw http.ResponseWriter, r *http.Request){
-	log.Println("New Request: " + r.URL.String())
 	files, err := ioutil.ReadDir(vidDir)
     if err != nil {
     	log.Fatal(err)
@@ -77,7 +72,6 @@ func files(rw http.ResponseWriter, r *http.Request){
 }
 
 func file(rw http.ResponseWriter, r *http.Request){
-	log.Println("New Request: " + r.URL.String())
 	var fileName string
 	if strings.ContainsRune(r.URL.String(), '?'){
 		fileName = r.URL.Query().Get("file")

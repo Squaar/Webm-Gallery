@@ -20,7 +20,7 @@ function buildGrid(){
 
 	for(var i=0; i<files.length; i++){
 		gridHTML += '<div class="cell col-6 col-md-' + 12/nCols + '">' + 
-			'<a class="thumbnail" href="javascript:showModal(' + i + ');"><img src="/img/SpicyDancer.png"></a>' +
+			'<a class="thumbnail" href="javascript:showModal(' + i + ');"><img src="/thumb/' + files[i] + '"></a>' +
 			'</div>';
 	}
 	gridHTML += '</div>';
